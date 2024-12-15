@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Tienda Online</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f4f4f4;
+            position: relative;
+        }
+        .header {
+            position: relative;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .carrito-header {
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+        }
+        .carrito-icono {
+            position: relative;
+        }
+        .carrito-contador {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background-color: red;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+        .carrito-desplegable {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 300px;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            z-index: 1000;
+            display: none;
+        }
+        .producto {
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin: 15px 0;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .producto img {
+            max-width: 150px;
+            max-height: 150px;
+            margin-right: 20px;
+        }
+        .producto-info {
+            flex-grow: 1;
+        }
+        .producto button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        #lista-carrito {
+            list-style-type: none;
+            padding: 0;
+        }
+        #lista-carrito li {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Mi Tienda Online</h1>
+        <div class="carrito-header" onclick="toggleCarrito()">
+            <div class="carrito-icono">
+                <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="9" cy="21" r="1"></circle>
+                    <circle cx="20" cy="21" r="1"></circle>
+                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                </svg>
+                <div id="carrito-contador" class="carrito-contador">0</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="carrito-desplegable" id="carrito-desplegable">
+        <h2>Carrito de Compras</h2>
+        <ul id="lista-carrito"></ul>
+        <p>Total: $<span id="total-carrito">0</span></p>
+        <button onclick="finalizarCompra()">Finalizar Compra</button>
+    </div>
+
+    <div class="productos">
+        <div class="producto">
+            <img src="Producto 1.jpeg" alt="Producto 1">
+            <div class="producto-info">
+                <h2>Producto 1</h2>
+                <p>Descripción del primer producto</p>
+                <p>Precio: $100</p>
+                <button onclick="agregarAlCarrito('Producto 1', 100)">Comprar</button>
+            </div>
+        </div>
+
+        <div class="producto">
+            <img src="Producto 2.jpeg" alt="Producto 2">
+            <div class="producto-info">
+                <h2>Producto 2</h2>
+                <p>Descripción del segundo producto</p>
+                <p>Precio: $200</p>
+                <button onclick="agregarAlCarrito('Producto 2', 200)">Comprar</button>
+            </div>
+        </div>
+
+        <div class="producto">
+            <img src="Producto 3.jpeg" alt="Producto 3">
+            <div class="producto-info">
+                <h2>Producto 3</h2>
+                <p>Descripción del tercer producto</p>
+                <p>Precio: $300</p>
+                <button onclick="agregarAlCarrito('Producto 3', 300)">Comprar</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let carrito = [];
+        let total = 0;
+
+        function agregarAlCarrito(nombre, precio) {
+            carrito.push({ nombre, precio });
+            actualizarCarrito();
+        }
+
+        function actualizarCarrito() {
+            const listaCarrito = document.getElementById('lista-carrito');
+            const totalCarrito = document.getElementById('total-carrito');
+            const contadorCarrito = document.getElementById('carrito-contador');
+            
+            // Limpiar lista actual
+            listaCarrito.innerHTML = '';
+            
+            // Reconstruir lista y calcular total
+            total = 0;
+            carrito.forEach(item => {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <span>${item.nombre}</span>
+                    <span>$${item.precio}</span>
+                `;
+                listaCarrito.appendChild(li);
+                total += item.precio;
+            });
+
+            totalCarrito.textContent = total.toFixed(2);
+            contadorCarrito.textContent = carrito.length;
+        }
+
+        function toggleCarrito() {
+            const carritoDesplegable = document.getElementById('carrito-desplegable');
+            carritoDesplegable.style.display = carritoDesplegable.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function finalizarCompra() {
+            if (carrito.length === 0) {
+                alert('El carrito está vacío');
+                return;
+            }
+
+            const correo = prompt('Por favor, ingresa tu correo electrónico:');
+            
+            if (correo) {
+                // Preparar detalles de la compra
+                let detallesCompra = 'Detalles de la Compra:\n\n';
+                carrito.forEach(item => {
+                    detallesCompra += `${item.nombre} - $${item.precio}\n`;
+                });
+                detallesCompra += `\nTotal: $${total.toFixed(2)}`;
+
+                // Abrir cliente de correo
+                window.location.href = `mailto:axel78022@gmail.com?subject=Compra%20en%20Tienda%20Online&body=Correo%20del%20usuario:%20${correo}%0A%0A${encodeURIComponent(detallesCompra)}`;
+
+                // Limpiar carrito
+                carrito = [];
+                actualizarCarrito();
+                
+                // Ocultar carrito después de finalizar compra
+                document.getElementById('carrito-desplegable').style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
